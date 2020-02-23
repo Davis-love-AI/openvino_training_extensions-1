@@ -34,6 +34,12 @@ class SparsityScheduler(CompressionScheduler):
         self.max_step = c.get('sparsity_steps', 90)
         self.max_sparsity = c.get('sparsity_target', 0.5)
         self.initial_sparsity = c.get('sparsity_init', 0)
+        self.mask_update_freq = c.get('mask_update_freq', 5)
+
+    def step(self, last=None):
+        super().epoch_step(last)
+        if (self.last_step % self.mask_update_freq) == 0:
+            self._set_sparsity_level()
 
     def epoch_step(self, epoch=None):
         super().epoch_step(epoch)

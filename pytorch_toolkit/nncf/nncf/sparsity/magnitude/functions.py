@@ -31,5 +31,7 @@ WEIGHT_IMPORTANCE_FUNCTIONS = {
 
 
 @register_operator()
-def calc_magnitude_binary_mask(weight, weight_importance, threshold):
-    return (weight_importance(weight) > threshold).float()
+def calc_magnitude_binary_mask(weight, weight_importance, threshold, dropout_rate):
+    dropout_mask = (torch.rand(weight.size()) > dropout_rate).float().to(weight.device)
+    unimportance_mask = (weight_importance(weight) < threshold).float()
+    return 1 - dropout_mask * unimportance_mask

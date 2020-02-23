@@ -34,6 +34,7 @@ class MagnitudeSparsity(BaseSparsityAlgo):
 
         self.ignored_scopes = self.config.get('ignored_scopes')
         self.target_scopes = self.config.get('target_scopes')
+        self.dropout_rate = self.config.get('dropout_rate')
         self.dummy_forward_fn = dummy_forward_fn
         if self.dummy_forward_fn is None:
             self.dummy_forward_fn = create_dummy_forward_fn(input_infos)
@@ -85,7 +86,8 @@ class MagnitudeSparsity(BaseSparsityAlgo):
         def hook(module, inputs):
             module.binary_mask = calc_magnitude_binary_mask(inputs[0],
                                                             self.weight_importance,
-                                                            threshold_val)
+                                                            threshold_val,
+                                                            self.dropout_rate)
 
         handles = []
         for layer in self.sparsified_module_info:
