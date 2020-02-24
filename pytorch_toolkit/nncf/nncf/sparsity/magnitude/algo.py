@@ -34,13 +34,14 @@ class MagnitudeSparsity(BaseSparsityAlgo):
 
         self.ignored_scopes = self.config.get('ignored_scopes')
         self.target_scopes = self.config.get('target_scopes')
-        self.dropout_rate = self.config.get('dropout_rate')
         self.dummy_forward_fn = dummy_forward_fn
         if self.dummy_forward_fn is None:
             self.dummy_forward_fn = create_dummy_forward_fn(input_infos)
 
         params = self.config.get("params", {})
         device = next(model.parameters()).device
+
+        self.dropout_rate = params.get('dropout_rate', 0.0)
 
         self.weight_importance = WEIGHT_IMPORTANCE_FUNCTIONS.get(
             self.config.get('weight_importance', 'normed_abs'))
